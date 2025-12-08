@@ -258,65 +258,15 @@ export default function Index() {
                 {t("welcomePortfolio")}
               </motion.div>
 
-              <div className="relative">
-                <motion.h1
-                  variants={itemVariants}
-                  className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6 leading-tight pr-32 sm:pr-40"
-                >
-                  {t("heroTitle")}
-                  <span className={`block bg-gradient-to-r ${colors.button} bg-clip-text text-transparent`}>
-                    {t("heroTitleSpan")}
-                  </span>
-                </motion.h1>
-                
-                {/* Placeholder Avatar - Replace this with your photo */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 200 }}
-                  className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-500 dark:from-yellow-500 dark:via-amber-500 dark:to-yellow-600 border-4 border-white dark:border-slate-800 shadow-2xl flex items-center justify-center overflow-hidden group hover:scale-110 transition-transform duration-300"
-                >
-                  {/* Replace this placeholder with your image: <img src="/your-photo.jpg" alt="Your Name" className="w-full h-full object-cover" /> */}
-                  <svg
-                    className="w-full h-full"
-                    viewBox="0 0 200 200"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    {/* Background gradient circle */}
-                    <circle cx="100" cy="100" r="100" fill="url(#gradient)" />
-                    
-                    {/* Gradient definition */}
-                    <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FCD34D" />
-                        <stop offset="50%" stopColor="#F59E0B" />
-                        <stop offset="100%" stopColor="#D97706" />
-                      </linearGradient>
-                    </defs>
-                    
-                    {/* Abstract geometric shapes - Code/tech inspired */}
-                    {/* Main shape - stylized "O" or circuit pattern */}
-                    <circle cx="100" cy="100" r="50" fill="none" stroke="white" strokeWidth="6" opacity="0.9" />
-                    <circle cx="100" cy="100" r="35" fill="none" stroke="white" strokeWidth="4" opacity="0.7" />
-                    
-                    {/* Corner accents - like code brackets */}
-                    <path d="M 40 60 L 50 50 L 50 70 Z" fill="white" opacity="0.8" />
-                    <path d="M 160 60 L 150 50 L 150 70 Z" fill="white" opacity="0.8" />
-                    <path d="M 40 140 L 50 150 L 50 130 Z" fill="white" opacity="0.8" />
-                    <path d="M 160 140 L 150 150 L 150 130 Z" fill="white" opacity="0.8" />
-                    
-                    {/* Center dot - focal point */}
-                    <circle cx="100" cy="100" r="8" fill="white" opacity="0.95" />
-                    
-                    {/* Decorative lines - tech aesthetic */}
-                    <line x1="70" y1="100" x2="85" y2="100" stroke="white" strokeWidth="3" opacity="0.6" />
-                    <line x1="115" y1="100" x2="130" y2="100" stroke="white" strokeWidth="3" opacity="0.6" />
-                    <line x1="100" y1="70" x2="100" y2="85" stroke="white" strokeWidth="3" opacity="0.6" />
-                    <line x1="100" y1="115" x2="100" y2="130" stroke="white" strokeWidth="3" opacity="0.6" />
-                  </svg>
-                </motion.div>
-              </div>
+              <motion.h1
+                variants={itemVariants}
+                className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6 leading-tight"
+              >
+                {t("heroTitle")}
+                <span className={`block bg-gradient-to-r ${colors.button} bg-clip-text text-transparent`}>
+                  {t("heroTitleSpan")}
+                </span>
+              </motion.h1>
 
               <motion.p
                 variants={itemVariants}

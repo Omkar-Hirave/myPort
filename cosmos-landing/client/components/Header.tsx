@@ -62,24 +62,26 @@ export function Header({ onContactClick }: HeaderProps) {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => {
-              if (item.href === "/") {
-                return (
-                  <button
-                    key={item.label}
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors cursor-pointer"
-                  >
-                    {item.label}
-                  </button>
-                );
-              }
+              const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.preventDefault();
+                if (item.href === "/") {
+                  // Scroll to top smoothly
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                } else if (item.href.startsWith("#")) {
+                  // Handle hash links with smooth scroll
+                  const element = document.querySelector(item.href);
+                  if (element) {
+                    element.scrollIntoView({ behavior: "smooth" });
+                  }
+                }
+              };
+              
               return (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
+                  onClick={handleClick}
+                  className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors cursor-pointer"
                 >
                   {item.label}
                 </a>
@@ -291,26 +293,27 @@ export function Header({ onContactClick }: HeaderProps) {
           >
             <div className="flex flex-col gap-3 pt-4">
               {navItems.map((item) => {
-                if (item.href === "/") {
-                  return (
-                    <button
-                      key={item.label}
-                      onClick={() => {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                        setIsOpen(false);
-                      }}
-                      className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium px-2 py-2 text-left"
-                    >
-                      {item.label}
-                    </button>
-                  );
-                }
+                const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                  e.preventDefault();
+                  setIsOpen(false);
+                  if (item.href === "/") {
+                    // Scroll to top smoothly
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  } else if (item.href.startsWith("#")) {
+                    // Handle hash links with smooth scroll
+                    const element = document.querySelector(item.href);
+                    if (element) {
+                      element.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }
+                };
+                
                 return (
                   <a
                     key={item.label}
                     href={item.href}
-                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium px-2 py-2"
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleClick}
+                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium px-2 py-2 cursor-pointer"
                   >
                     {item.label}
                   </a>
