@@ -14,13 +14,14 @@
     ]
   },
   "scripts": {
-    "dev": "vite",
+    "setup": "bash -c 'source $HOME/.nvm/nvm.sh && nvm use'",
+    "dev": "bash use-node-version.sh vite",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "npx vite build",
-    "build:server": "vite build --config vite.config.server.ts",
+    "build:client": "bash use-node-version.sh npx vite build",
+    "build:server": "bash use-node-version.sh vite build --config vite.config.server.ts",
     "vercel-build": "node build.js",
     "start": "node dist/server/node-build.mjs",
-    "test": "vitest --run",
+    "test": "bash use-node-version.sh vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"
   },
