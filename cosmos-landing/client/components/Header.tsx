@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { Menu, X, Moon, Sun, Palette } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, Moon, Sun, Palette, Mail, Check, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@/contexts/i18n-context";
 import { useColor } from "@/contexts/color-context";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { Language } from "@/lib/i18n";
 import type { ColorTheme } from "@/lib/colors";
 
@@ -16,23 +17,108 @@ export function Header({ onContactClick }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isColorOpen, setIsColorOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const [emailCopied, setEmailCopied] = useState(false);
+  const [phoneCopied, setPhoneCopied] = useState(false);
+  const [showEmail, setShowEmail] = useState(true);
   const { theme, setTheme } = useTheme();
   const { t, language, setLanguage } = useI18n();
   const { color, setColor, colors: themeColors } = useColor();
 
+  const email = "omkarhirve05@gmail.com";
+  const phone = "+91 95294 33723"; // Update with your actual phone number
+
+  // Auto-switch between email and phone every 4 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowEmail((prev) => !prev);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy email:", err);
+    }
+  };
+
+  const handleCopyPhone = async () => {
+    try {
+      await navigator.clipboard.writeText(phone);
+      setPhoneCopied(true);
+      setTimeout(() => setPhoneCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy phone:", err);
+    }
+  };
+
+  const handleCopy = () => {
+    if (showEmail) {
+      handleCopyEmail();
+    } else {
+      handleCopyPhone();
+    }
+  };
+
   const navItems = [
-    { label: t("home"), href: "/" },
-    { label: t("experience"), href: "#experience" },
-    { label: t("projects"), href: "#projects" },
-    { label: t("skills"), href: "#skills" },
-    { label: t("blogs"), href: "#blogs" },
+    { label: t("home"), href: "/", id: "home" },
+    { label: t("experience"), href: "#experience", id: "experience" },
+    { label: t("projects"), href: "#projects", id: "projects" },
+    { label: t("skills"), href: "#skills", id: "skills" },
+    { label: t("blogs"), href: "#blogs", id: "blogs" },
   ];
+
+  // Scroll spy to detect active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["home", "experience", "projects", "skills", "blogs"];
+      const scrollPosition = window.scrollY + 100; // Offset for header height
+
+      // Check if we're at the top (home section)
+      if (scrollPosition < 200) {
+        setActiveSection("home");
+        return;
+      }
+
+      // Find the section currently in view
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            setActiveSection(sections[i]);
+            return;
+          }
+        }
+      }
+    };
+
+    // Initial check
+    handleScroll();
+
+    // Listen to scroll events
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
 
   const languages: { code: Language; name: string }[] = [
     { code: "en", name: "English" },
     { code: "es", name: "Español" },
     { code: "hi", name: "हिंदी" },
     { code: "fr", name: "Français" },
+    { code: "mr", name: "मराठी" },
   ];
 
   const colors: { name: ColorTheme; label: string; gradient: string }[] = [
@@ -62,16 +148,19 @@ export function Header({ onContactClick }: HeaderProps) {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => {
+              const isActive = activeSection === item.id;
               const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                 e.preventDefault();
                 if (item.href === "/") {
                   // Scroll to top smoothly
                   window.scrollTo({ top: 0, behavior: "smooth" });
+                  setActiveSection("home");
                 } else if (item.href.startsWith("#")) {
                   // Handle hash links with smooth scroll
                   const element = document.querySelector(item.href);
                   if (element) {
                     element.scrollIntoView({ behavior: "smooth" });
+                    setActiveSection(item.id);
                   }
                 }
               };
@@ -81,9 +170,21 @@ export function Header({ onContactClick }: HeaderProps) {
                   key={item.label}
                   href={item.href}
                   onClick={handleClick}
-                  className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition-colors cursor-pointer"
+                  className={`relative font-medium transition-colors cursor-pointer ${
+                    isActive
+                      ? `text-slate-900 dark:text-white ${themeColors.hover}`
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                  }`}
                 >
                   {item.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeSection"
+                      className={`absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r ${themeColors.button}`}
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
                 </a>
               );
             })}
@@ -91,6 +192,75 @@ export function Header({ onContactClick }: HeaderProps) {
 
           {/* Controls */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Email/Phone Display with Copy - Auto Switching */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleCopy}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm overflow-hidden relative min-w-[200px]"
+                >
+                  <AnimatePresence mode="wait">
+                    {showEmail ? (
+                      <motion.div
+                        key="email"
+                        initial={{ opacity: 0, y: -20, x: 20 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        exit={{ opacity: 0, y: 20, x: -20 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="flex items-center gap-2"
+                      >
+                        {emailCopied ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <span className="text-green-600 dark:text-green-400">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="w-4 h-4" />
+                            <span>{email}</span>
+                          </>
+                        )}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="phone"
+                        initial={{ opacity: 0, y: -20, x: 20 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        exit={{ opacity: 0, y: 20, x: -20 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="flex items-center gap-2"
+                      >
+                        {phoneCopied ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <span className="text-green-600 dark:text-green-400">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Phone className="w-4 h-4" />
+                            <span>{phone}</span>
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {showEmail
+                    ? emailCopied
+                      ? "Email copied!"
+                      : "Click to copy email"
+                    : phoneCopied
+                    ? "Phone copied!"
+                    : "Click to copy phone"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
             {/* Color Selector */}
             <div className="relative">
               <button
@@ -187,6 +357,60 @@ export function Header({ onContactClick }: HeaderProps) {
 
           {/* Mobile Menu & Controls */}
           <div className="md:hidden flex items-center gap-2">
+            {/* Email/Phone Display with Copy - Mobile - Auto Switching */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleCopy}
+                  className="flex items-center gap-1 px-2 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs overflow-hidden relative min-w-[40px]"
+                >
+                  <AnimatePresence mode="wait">
+                    {showEmail ? (
+                      <motion.div
+                        key="email-mobile"
+                        initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                      >
+                        {emailCopied ? (
+                          <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        ) : (
+                          <Mail className="w-4 h-4" />
+                        )}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="phone-mobile"
+                        initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                      >
+                        {phoneCopied ? (
+                          <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        ) : (
+                          <Phone className="w-4 h-4" />
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {showEmail
+                    ? emailCopied
+                      ? "Email copied!"
+                      : "Click to copy email"
+                    : phoneCopied
+                    ? "Phone copied!"
+                    : "Click to copy phone"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -293,17 +517,20 @@ export function Header({ onContactClick }: HeaderProps) {
           >
             <div className="flex flex-col gap-3 pt-4">
               {navItems.map((item) => {
+                const isActive = activeSection === item.id;
                 const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.preventDefault();
                   setIsOpen(false);
                   if (item.href === "/") {
                     // Scroll to top smoothly
                     window.scrollTo({ top: 0, behavior: "smooth" });
+                    setActiveSection("home");
                   } else if (item.href.startsWith("#")) {
                     // Handle hash links with smooth scroll
                     const element = document.querySelector(item.href);
                     if (element) {
                       element.scrollIntoView({ behavior: "smooth" });
+                      setActiveSection(item.id);
                     }
                   }
                 };
@@ -313,9 +540,21 @@ export function Header({ onContactClick }: HeaderProps) {
                     key={item.label}
                     href={item.href}
                     onClick={handleClick}
-                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium px-2 py-2 cursor-pointer"
+                    className={`relative font-medium px-2 py-2 cursor-pointer transition-colors ${
+                      isActive
+                        ? `text-slate-900 dark:text-white ${themeColors.hover}`
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                    }`}
                   >
                     {item.label}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeSectionMobile"
+                        className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${themeColors.button} rounded-r`}
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </a>
                 );
               })}

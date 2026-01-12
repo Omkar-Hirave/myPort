@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, AlertCircle, CheckCircle2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { useColor } from "@/contexts/color-context";
 import { colorClassMap } from "@/lib/color-utils";
+import { useI18n } from "@/contexts/i18n-context";
+import { EMAILJS_CONFIG } from "@/lib/emailjs-config";
 
 export function ContactSection() {
   const { colors, color } = useColor();
   const colorClasses = colorClassMap[color];
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,65 +29,43 @@ export function ContactSection() {
     setSuccess(false);
 
     try {
-      let response;
-      try {
-        response = await fetch("/.netlify/functions/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...formData,
-            to: "omkarhirve05@gmail.com",
-          }),
-        });
-      } catch (fetchError) {
-        // Network error or function not found
-        if (fetchError instanceof TypeError) {
-          throw new Error("Unable to connect to server. The contact form may not be configured yet. Please use the 'Email me' button instead.");
+      // Initialize EmailJS with your public key
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone || "Not provided",
+          subject: formData.subject,
+          message: formData.message,
+          to_email: EMAILJS_CONFIG.TO_EMAIL,
         }
-        throw fetchError;
+      );
+
+      if (result.status === 200) {
+        // Success
+        setSuccess(true);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => {
+          setSuccess(false);
+        }, 5000);
+      } else {
+        throw new Error("Failed to send email");
       }
-
-      // Get response text first
-      const responseText = await response.text();
-      let data;
-
-      // Try to parse as JSON
-      try {
-        data = responseText ? JSON.parse(responseText) : {};
-      } catch (parseError) {
-        // If parsing fails, use the text as message or provide a default
-        if (responseText.trim()) {
-          data = { message: responseText };
-        } else if (response.status === 404) {
-          data = { message: "Contact form endpoint not found. Please configure the email function." };
-        } else {
-          data = { message: `Server returned an invalid response (Status: ${response.status})` };
-        }
-      }
-
-      if (!response.ok) {
-        const errorMessage = data.message || data.error || `Server error (Status: ${response.status})`;
-        throw new Error(errorMessage);
-      }
-
-      // Success
-      setSuccess(true);
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 5000);
     } catch (err) {
+      console.error("EmailJS error:", err);
       // Provide more specific error messages
-      if (err instanceof TypeError && err.message.includes("fetch")) {
-        setError("Network error: Unable to connect to server. Please check your internet connection.");
-      } else if (err instanceof Error) {
-        setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message || "Failed to send email. Please check your EmailJS configuration.");
       } else {
         setError("An unexpected error occurred. Please try again later.");
       }
-      console.error("Form submission error:", err);
     } finally {
       setLoading(false);
     }
@@ -101,10 +83,10 @@ export function ContactSection() {
           className="text-center mb-12"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            Get in Touch
+            {t("contact.title")}
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300">
-            Have a project in mind? Let's work together to bring your ideas to life.
+            {t("contact.subtitle")}
           </p>
         </motion.div>
 
@@ -124,10 +106,10 @@ export function ContactSection() {
                 <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
-                Message Sent Successfully!
+                {t("contact.messageSentSuccess")}
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg">
-                Thank you for reaching out. I'll get back to you as soon as possible.
+                {t("contact.thankYouSuccess")}
               </p>
             </motion.div>
           ) : (
@@ -136,7 +118,7 @@ export function ContactSection() {
                 {/* Name */}
                 <div>
                   <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                    Name *
+                    {t("contact.name")} *
                   </label>
                   <input
                     type="text"
@@ -146,14 +128,14 @@ export function ContactSection() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className={inputClasses}
-                    placeholder="Your name"
+                    placeholder={t("contact.namePlaceholder")}
                   />
                 </div>
 
                 {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                    Email *
+                    {t("contact.email")} *
                   </label>
                   <input
                     type="email"
@@ -163,7 +145,7 @@ export function ContactSection() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     className={inputClasses}
-                    placeholder="your.email@example.com"
+                    placeholder={t("contact.emailPlaceholder")}
                   />
                 </div>
               </div>
@@ -172,7 +154,7 @@ export function ContactSection() {
                 {/* Phone */}
                 <div>
                   <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                    Phone
+                    {t("contact.phone")}
                   </label>
                   <input
                     type="tel"
@@ -181,14 +163,14 @@ export function ContactSection() {
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     className={inputClasses}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={t("contact.phonePlaceholder")}
                   />
                 </div>
 
                 {/* Subject */}
                 <div>
                   <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                    Subject *
+                    {t("contact.subject")} *
                   </label>
                   <input
                     type="text"
@@ -198,7 +180,7 @@ export function ContactSection() {
                       setFormData({ ...formData, subject: e.target.value })
                     }
                     className={inputClasses}
-                    placeholder="How can I help?"
+                    placeholder={t("contact.subjectPlaceholder")}
                   />
                 </div>
               </div>
@@ -206,7 +188,7 @@ export function ContactSection() {
               {/* Message */}
               <div>
                 <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                  Message *
+                  {t("contact.message")} *
                 </label>
                 <textarea
                   required
@@ -216,7 +198,7 @@ export function ContactSection() {
                   }
                   rows={6}
                   className={inputClasses}
-                  placeholder="Tell me more about your project..."
+                  placeholder={t("contact.messagePlaceholder")}
                 />
               </div>
 
@@ -243,12 +225,12 @@ export function ContactSection() {
                 {loading ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Sending...
+                    {t("contact.sending")}
                   </>
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    Send Message
+                    {t("contact.sendMessage")}
                   </>
                 )}
               </motion.button>

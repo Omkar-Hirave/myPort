@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, AlertCircle } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { useColor } from "@/contexts/color-context";
+import { useI18n } from "@/contexts/i18n-context";
+import { EMAILJS_CONFIG } from "@/lib/emailjs-config";
 
 interface ContactFormModalProps {
   isOpen: boolean;
@@ -10,6 +13,7 @@ interface ContactFormModalProps {
 
 export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
   const { colors } = useColor();
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,29 +31,40 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
     setError("");
 
     try {
-      const response = await fetch("/.netlify/functions/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          to: "omkarhirve05@gmail.com",
-        }),
-      });
+      // Initialize EmailJS with your public key
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
 
-      const data = await response.json();
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone || "Not provided",
+          subject: formData.subject,
+          message: formData.message,
+          to_email: EMAILJS_CONFIG.TO_EMAIL,
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to send email");
+      if (result.status === 200) {
+        setSuccess(true);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+        setTimeout(() => {
+          onClose();
+          setSuccess(false);
+        }, 2000);
+      } else {
+        throw new Error("Failed to send email");
       }
-
-      setSuccess(true);
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-      setTimeout(() => {
-        onClose();
-        setSuccess(false);
-      }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("EmailJS error:", err);
+      setError(
+        err instanceof Error 
+          ? err.message 
+          : "Failed to send email. Please check your EmailJS configuration."
+      );
     } finally {
       setLoading(false);
     }
@@ -78,7 +93,7 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                  Get in Touch
+                  {t("contact.title")}
                 </h2>
                 <button
                   onClick={onClose}
@@ -98,10 +113,10 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                     <Send className={`w-6 h-6 text-${colors.primary}`} />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                    Message Sent!
+                    {t("contact.messageSent")}
                   </h3>
                   <p className="text-slate-600 dark:text-slate-400">
-                    Thank you for reaching out. I'll get back to you soon!
+                    {t("contact.thankYou")}
                   </p>
                 </motion.div>
               ) : (
@@ -109,7 +124,7 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                   {/* Name */}
                   <div>
                     <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                      Name *
+                      {t("contact.name")} *
                     </label>
                     <input
                       type="text"
@@ -119,14 +134,14 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                         setFormData({ ...formData, name: e.target.value })
                       }
                       className={inputClasses}
-                      placeholder="Your name"
+                      placeholder={t("contact.namePlaceholder")}
                     />
                   </div>
 
                   {/* Email */}
                   <div>
                     <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                      Email *
+                      {t("contact.email")} *
                     </label>
                     <input
                       type="email"
@@ -143,7 +158,7 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                   {/* Phone */}
                   <div>
                     <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                      Phone
+                      {t("contact.phone")}
                     </label>
                     <input
                       type="tel"
@@ -152,14 +167,14 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                         setFormData({ ...formData, phone: e.target.value })
                       }
                       className={inputClasses}
-                      placeholder="+1 (555) 123-4567"
+                      placeholder={t("contact.phonePlaceholder")}
                     />
                   </div>
 
                   {/* Subject */}
                   <div>
                     <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                      Subject *
+                      {t("contact.subject")} *
                     </label>
                     <input
                       type="text"
@@ -169,14 +184,14 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                         setFormData({ ...formData, subject: e.target.value })
                       }
                       className={inputClasses}
-                      placeholder="How can I help?"
+                      placeholder={t("contact.subjectPlaceholder")}
                     />
                   </div>
 
                   {/* Message */}
                   <div>
                     <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                      Message *
+                      {t("contact.message")} *
                     </label>
                     <textarea
                       required
@@ -186,7 +201,7 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                       }
                       rows={4}
                       className={inputClasses}
-                      placeholder="Tell me more about your project..."
+                      placeholder={t("contact.messagePlaceholder")}
                     />
                   </div>
 
@@ -213,12 +228,12 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
                     {loading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Sending...
+                        {t("contact.sending")}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        Send Message
+                        {t("contact.sendMessage")}
                       </>
                     )}
                   </motion.button>

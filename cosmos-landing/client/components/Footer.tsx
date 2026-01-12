@@ -134,7 +134,7 @@ export function Footer() {
         <div className="border-t border-slate-800 pt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-400">
-              © 2024 Omkar Hirave. All rights reserved.
+              © 2025 Omkar Hirave. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-slate-400">
               <a href="#" className="hover:text-white transition-colors">

@@ -4,7 +4,7 @@ import { Language, translations } from "@/lib/i18n";
 interface I18nContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string) => string | string[] | any;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -13,7 +13,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>("en");
 
   const t = useMemo(() => {
-    return (key: string): string => {
+    return (key: string): string | string[] | any => {
       const keys = key.split(".");
       let value: any = translations[language];
       
@@ -21,7 +21,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         value = value?.[k];
       }
       
-      return typeof value === "string" ? value : key;
+      return value !== undefined ? value : key;
     };
   }, [language]);
 

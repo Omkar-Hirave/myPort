@@ -6,7 +6,11 @@ import { BlogCard } from "@/components/BlogCard";
 import { AchievementBadges } from "@/components/AchievementBadges";
 import { Hero3D } from "@/components/Hero3D";
 import { ContactSection } from "@/components/ContactSection";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { BackToTop } from "@/components/BackToTop";
+import { ConstructionModal } from "@/components/ConstructionModal";
 import { ArrowRight, Github, Linkedin, Mail, Download, Eye, ChevronDown } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useI18n } from "@/contexts/i18n-context";
@@ -35,62 +39,7 @@ const itemVariants = {
   },
 };
 
-const blogPosts = [
-  {
-    title: "Building Scalable React Applications with Component Architecture",
-    description: "Deep dive into creating maintainable and performant React components using modern patterns and best practices. Learn composition, hooks, and state management.",
-    category: "React",
-    date: "Mar 15, 2024",
-    readTime: "8 min read",
-    link: "https://medium.com",
-    views: 2500,
-  },
-  {
-    title: "Master JavaScript Async/Await: From Promises to Modern Patterns",
-    description: "Comprehensive guide to understanding asynchronous JavaScript, error handling, and advanced patterns for async operations.",
-    category: "JavaScript",
-    date: "Mar 10, 2024",
-    readTime: "10 min read",
-    link: "https://medium.com",
-    views: 3200,
-  },
-  {
-    title: "React Hooks Deep Dive: useEffect, useContext, and Custom Hooks",
-    description: "Explore the power of React Hooks and learn how to build custom hooks for your application. Advanced patterns included.",
-    category: "React",
-    date: "Mar 5, 2024",
-    readTime: "12 min read",
-    link: "https://medium.com",
-    views: 4100,
-  },
-  {
-    title: "CSS Grid vs Flexbox: When and How to Use Each",
-    description: "Learn the differences between CSS Grid and Flexbox and master when to use each layout system effectively.",
-    category: "CSS",
-    date: "Feb 28, 2024",
-    readTime: "7 min read",
-    link: "https://medium.com",
-    views: 1800,
-  },
-  {
-    title: "State Management in React: Redux vs Context API vs Zustand",
-    description: "Compare different state management solutions and learn when to use Redux, Context API, or newer alternatives.",
-    category: "React",
-    date: "Feb 20, 2024",
-    readTime: "11 min read",
-    link: "https://medium.com",
-    views: 3500,
-  },
-  {
-    title: "Performance Optimization: Making Your React App Lightning Fast",
-    description: "Essential techniques for optimizing React applications including code splitting, memoization, and lazy loading.",
-    category: "Performance",
-    date: "Feb 12, 2024",
-    readTime: "9 min read",
-    link: "https://medium.com",
-    views: 2800,
-  },
-];
+// Blog posts will be generated dynamically based on language
 
 // LeetCode Icon Component - Stylized "L" representing LeetCode
 function LeetCodeIcon({ className }: { className?: string }) {
@@ -106,8 +55,23 @@ function LeetCodeIcon({ className }: { className?: string }) {
   );
 }
 
+// CodeSandbox Icon Component
+function CodeSandboxIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1.5 6L12 0l10.5 6v12L12 24 1.5 18V6zm2.086 1.414v9.172L11 19.134V11.586L3.586 7.414zm16.828 0L13 11.586v7.548l7.414-4.172V7.414zM12 2.134l7.414 4.172L12 10.478 4.586 6.306 12 2.134z" />
+    </svg>
+  );
+}
+
 function ResumeDropdownSection({ t, onContactClick, onViewWork, colors, colorClasses }: { t: (key: string) => string; onContactClick: () => void; onViewWork: () => void; colors: any; colorClasses: any }) {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close dropdown
@@ -126,6 +90,16 @@ function ResumeDropdownSection({ t, onContactClick, onViewWork, colors, colorCla
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isResumeOpen]);
+
+  // Highlight Resume button at intervals
+  useEffect(() => {
+    const highlightInterval = setInterval(() => {
+      setIsHighlighted(true);
+      setTimeout(() => setIsHighlighted(false), 3000); // Highlight for 2 seconds
+    }, 5000); // Highlight every 8 seconds
+
+    return () => clearInterval(highlightInterval);
+  }, []);
 
   return (
     <motion.div
@@ -148,7 +122,7 @@ function ResumeDropdownSection({ t, onContactClick, onViewWork, colors, colorCla
         className={`flex items-center justify-center gap-2 px-6 h-14 border-2 ${colorClasses.border} ${colorClasses.borderDark} ${colorClasses.text} ${colorClasses.textDark} rounded-lg font-semibold ${colorClasses.hoverBg} ${colorClasses.hoverBgDark} transition-colors whitespace-nowrap box-border`}
       >
         <Mail className="w-5 h-5 flex-shrink-0" />
-        Email me
+        {t("emailMe")}
       </motion.a>
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -166,11 +140,38 @@ function ResumeDropdownSection({ t, onContactClick, onViewWork, colors, colorCla
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsResumeOpen(!isResumeOpen)}
-          className="flex items-center justify-center gap-2 px-6 h-14 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors whitespace-nowrap"
+          animate={{
+            scale: isHighlighted ? [1, 1.02, 1] : 1,
+          }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            repeat: isHighlighted ? 1 : 0,
+          }}
+          className={`flex items-center justify-center gap-2 px-6 h-14 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all whitespace-nowrap cursor-pointer border-2 relative ${
+            isHighlighted
+              ? `${colorClasses.border} ${colorClasses.borderDark} ${colorClasses.shadow}`
+              : "border-transparent"
+          }`}
         >
-          <Download className="w-4 h-4 flex-shrink-0" />
-          Resume
-          <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isResumeOpen ? "rotate-180" : ""}`} />
+          {/* Pulsing ring effect when highlighted */}
+          {isHighlighted && (
+            <motion.div
+              className={`absolute inset-0 rounded-lg border-2 ${colorClasses.border} ${colorClasses.borderDark} opacity-0`}
+              animate={{
+                opacity: [0, 0.6, 0],
+                scale: [1, 1.1, 1.2],
+              }}
+              transition={{
+                duration: 2,
+                ease: "easeInOut",
+                repeat: 1,
+              }}
+            />
+          )}
+          <Download className="w-4 h-4 flex-shrink-0 pointer-events-none relative z-10" />
+          <span className="pointer-events-none relative z-10">{t("resume")}</span>
+          <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform pointer-events-none relative z-10 ${isResumeOpen ? "rotate-180" : ""}`} />
         </motion.button>
 
         {isResumeOpen && (
@@ -227,10 +228,14 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors">
+      <ConstructionModal />
+      <ScrollProgress />
+      <BackToTop />
       <Header onContactClick={scrollToContact} />
 
       {/* Hero Section */}
       <section
+        id="home"
         ref={heroRef}
         className="relative overflow-hidden pt-12 pb-32 px-4 sm:px-6 lg:px-8 dark:bg-slate-900"
       >
@@ -287,44 +292,89 @@ export default function Index() {
                   {t("connectWithMe")}
                 </span>
                 <div className="flex gap-4">
-                  <motion.a
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    href="https://linkedin.com/in/omkar-hirave"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    href="https://github.com/omkar-hirave"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white transition-all"
-                    aria-label="GitHub"
-                  >
-                    <Github className="w-5 h-5" />
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    href="https://leetcode.com/u/omkarhirave/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                    aria-label="LeetCode"
-                  >
-                    <LeetCodeIcon className="w-5 h-5" />
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    href="mailto:omkarhirve05@gmail.com"
-                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                    aria-label="Email"
-                  >
-                    <Mail className="w-5 h-5" />
-                  </motion.a>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="https://linkedin.com/in/omkar-hirave"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>LinkedIn</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="https://github.com/omkar-hirave"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white transition-all"
+                        aria-label="GitHub"
+                      >
+                        <Github className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>GitHub</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="https://leetcode.com/u/omkarhirave/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                        aria-label="LeetCode"
+                      >
+                        <LeetCodeIcon className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>LeetCode</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="mailto:omkarhirve05@gmail.com"
+                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                        aria-label="Email"
+                      >
+                        <Mail className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Email</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="https://codesandbox.io/u/omkar-hirave"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                        aria-label="CodeSandbox"
+                      >
+                        <CodeSandboxIcon className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>CodeSandbox</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </motion.div>
             </motion.div>
@@ -368,33 +418,23 @@ export default function Index() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid grid-cols-1 gap-8"
+            className="grid grid-cols-1 gap-12 md:gap-16 relative"
           >
             <motion.div variants={itemVariants}>
               <ExperienceCard
-                title="Front End Developer"
-                company="miniOrange Security Software"
-                duration="Sep 2024 – Present"
-                highlights={[
-                  "Architected a Cloud Security application using a component-driven React architecture with modular design patterns, reducing feature integration effort by 60% and boosting performance by 40%.",
-                  "Implemented responsive web design with React-MUI breakpoints, improving cross-device accessibility and reducing UI-related bug reports by 25%.",
-                  "Built intuitive auditing dashboards with real-time drill-down analytics, dynamic search filters, and seamless form validation—streamlining audit processes and improving data accuracy across large-scale records.",
-                  "Implemented comprehensive unit and integration tests using Jest and React Testing Library, reducing QA testing load by 30%, preventing regressions, and stabilizing production releases.",
-                ]}
+                title={t("experiences.miniOrange.title")}
+                company={t("experiences.miniOrange.company")}
+                duration={t("experiences.miniOrange.duration")}
+                highlights={t("experiences.miniOrange.highlights") as string[]}
               />
             </motion.div>
 
             <motion.div variants={itemVariants}>
               <ExperienceCard
-                title="Full Stack Developer"
-                company="Flairminds Software"
-                duration="Sep 2023 - Aug 2024"
-                highlights={[
-                  "Designed and developed a carbon emissions tracking app (React + Flask AI APIs) enabling businesses to calculate and report emissions across scopes, leading to an average 22% reduction in carbon footprint.",
-                  "Built a full-stack data migration application (React/Node.js) with dynamic mapping, transformation, and smooth transfer capabilities for large multi-database systems, improving data mapping by 35%.",
-                  "Constructed a resource management tool using React and Redux Toolkit, enhancing visibility into requests and availability and increasing resource distribution efficiency by 25%.",
-                  "E-commerce application: Built a MongoDB-integrated rating system with complex APIs for consumers, retailers, and delivery personnel with Node.js.",
-                ]}
+                title={t("experiences.flairminds.title")}
+                company={t("experiences.flairminds.company")}
+                duration={t("experiences.flairminds.duration")}
+                highlights={t("experiences.flairminds.highlights") as string[]}
               />
             </motion.div>
           </motion.div>
@@ -443,63 +483,63 @@ export default function Index() {
           >
             {[
               {
-                title: "Frontend",
+                title: t("skillsData.frontend"),
                 skills: [
-                  "React.js",
-                  "TypeScript",
-                  "HTML",
-                  "CSS",
-                  "JavaScript (ES6+)",
-                  "GraphQL",
+                  t("skillsData.skillNames.react"),
+                  t("skillsData.skillNames.typescript"),
+                  t("skillsData.skillNames.html"),
+                  t("skillsData.skillNames.css"),
+                  t("skillsData.skillNames.javascript"),
+                  t("skillsData.skillNames.graphql"),
                 ],
               },
               {
-                title: "Backend",
+                title: t("skillsData.backend"),
                 skills: [
-                  "Node.js",
-                  "Express.js",
-                  "RESTful APIs",
-                  "SQL",
-                  "MongoDB",
-                  "Mongoose ORM",
+                  t("skillsData.skillNames.nodejs"),
+                  t("skillsData.skillNames.express"),
+                  t("skillsData.skillNames.restful"),
+                  t("skillsData.skillNames.sql"),
+                  t("skillsData.skillNames.mongodb"),
+                  t("skillsData.skillNames.mongoose"),
                 ],
               },
               {
-                title: "Tools & Frameworks",
+                title: t("skillsData.toolsFrameworks"),
                 skills: [
-                  "Redux Toolkit",
-                  "MaterialUI",
-                  "Bootstrap",
-                  "Git",
-                  "Postman",
-                  "CursorAI",
+                  t("skillsData.skillNames.redux"),
+                  t("skillsData.skillNames.mui"),
+                  t("skillsData.skillNames.bootstrap"),
+                  t("skillsData.skillNames.git"),
+                  t("skillsData.skillNames.postman"),
+                  t("skillsData.skillNames.cursor"),
                 ],
               },
               {
-                title: "Specialization",
+                title: t("skillsData.specialization"),
                 skills: [
-                  "Cloud Security",
-                  "Responsive Design",
-                  "Performance Optimization",
-                  "Testing & QA",
+                  t("skillsData.skillNames.cloudSecurity"),
+                  t("skillsData.skillNames.responsive"),
+                  t("skillsData.skillNames.performance"),
+                  t("skillsData.skillNames.testing"),
                 ],
               },
               {
-                title: "DSA & Problem Solving",
+                title: t("skillsData.dsa"),
                 skills: [
-                  "LeetCode",
-                  "GeeksforGeeks",
-                  "TypeScript",
-                  "400+ Problems Solved",
+                  t("skillsData.skillNames.leetcode"),
+                  t("skillsData.skillNames.geeksforgeeks"),
+                  t("skillsData.skillNames.typescript"),
+                  t("skillsData.skillNames.problemsSolved"),
                 ],
               },
               {
-                title: "Content & Mentorship",
+                title: t("skillsData.content"),
                 skills: [
-                  "10+ Medium Articles",
-                  "100+ Developers Reached",
-                  "Team Leadership",
-                  "Code Review Expertise",
+                  t("skillsData.skillNames.articles"),
+                  t("skillsData.skillNames.developers"),
+                  t("skillsData.skillNames.leadership"),
+                  t("skillsData.skillNames.codeReview"),
                 ],
               },
             ].map((skillGroup, idx) => (
@@ -556,31 +596,27 @@ export default function Index() {
           >
             {[
               {
-                title: "Video Chat App",
-                description:
-                  "A peer-to-peer video calling platform with low-latency streaming and secure connections. Built with WebRTC for real-time communication and Socket.IO for signaling.",
-                technologies: ["React", "Node.js", "WebRTC", "Socket.IO"],
+                title: t("projectsData.videoChat.title"),
+                description: t("projectsData.videoChat.description"),
+                technologies: t("projectsData.videoChat.technologies") as string[],
                 github: "https://github.com",
               },
               {
-                title: "Real-Time Collaborative Design Tool",
-                description:
-                  "Multi-user canvas with synchronized drawing, zoom/pan navigation, undo/redo history, and conflict resolution. Enables seamless real-time collaboration with consistent state management.",
-                technologies: ["React", "Node.js", "WebSockets", "Canvas API"],
+                title: t("projectsData.collaborativeDesign.title"),
+                description: t("projectsData.collaborativeDesign.description"),
+                technologies: t("projectsData.collaborativeDesign.technologies") as string[],
                 github: "https://github.com",
               },
               {
-                title: "Carbon Emissions Tracking App",
-                description:
-                  "Business application for calculating and reporting emissions across scopes with Flask AI APIs integration. Helped businesses achieve an average 22% reduction in carbon footprint.",
-                technologies: ["React", "Flask", "AI APIs", "Analytics"],
+                title: t("projectsData.carbonEmissions.title"),
+                description: t("projectsData.carbonEmissions.description"),
+                technologies: t("projectsData.carbonEmissions.technologies") as string[],
                 link: "https://example.com",
               },
               {
-                title: "Data Migration Application",
-                description:
-                  "Full-stack solution with dynamic mapping, transformation, and smooth transfer capabilities for large multi-database systems. Improved data mapping efficiency by 35%.",
-                technologies: ["React", "Node.js", "MongoDB", "PostgreSQL"],
+                title: t("projectsData.dataMigration.title"),
+                description: t("projectsData.dataMigration.description"),
+                technologies: t("projectsData.dataMigration.technologies") as string[],
                 github: "https://github.com",
               },
             ].map((project, idx) => (
@@ -616,7 +652,62 @@ export default function Index() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {blogPosts.map((post, idx) => (
+            {[
+              {
+                title: t("blogsData.scalableReact.title"),
+                description: t("blogsData.scalableReact.description"),
+                category: t("blogsData.scalableReact.category"),
+                date: "Mar 15, 2024",
+                readTime: `8 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 2500,
+              },
+              {
+                title: t("blogsData.asyncAwait.title"),
+                description: t("blogsData.asyncAwait.description"),
+                category: t("blogsData.asyncAwait.category"),
+                date: "Mar 10, 2024",
+                readTime: `10 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 3200,
+              },
+              {
+                title: t("blogsData.reactHooks.title"),
+                description: t("blogsData.reactHooks.description"),
+                category: t("blogsData.reactHooks.category"),
+                date: "Mar 5, 2024",
+                readTime: `12 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 4100,
+              },
+              {
+                title: t("blogsData.cssGrid.title"),
+                description: t("blogsData.cssGrid.description"),
+                category: t("blogsData.cssGrid.category"),
+                date: "Feb 28, 2024",
+                readTime: `7 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 1800,
+              },
+              {
+                title: t("blogsData.stateManagement.title"),
+                description: t("blogsData.stateManagement.description"),
+                category: t("blogsData.stateManagement.category"),
+                date: "Feb 20, 2024",
+                readTime: `11 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 3500,
+              },
+              {
+                title: t("blogsData.performance.title"),
+                description: t("blogsData.performance.description"),
+                category: t("blogsData.performance.category"),
+                date: "Feb 12, 2024",
+                readTime: `9 ${t("blogsData.readTime")}`,
+                link: "https://medium.com",
+                views: 2800,
+              },
+            ].map((post, idx) => (
               <motion.div key={idx} variants={itemVariants}>
                 <BlogCard {...post} />
               </motion.div>
@@ -657,18 +748,16 @@ export default function Index() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    MSc Computer Applications
+                    {t("education.degree")}
                   </h3>
                   <p className={`text-lg ${colorClasses.text} ${colorClasses.textDark} font-semibold`}>
-                    Fergusson College Pune
+                    {t("education.college")}
                   </p>
                 </div>
               </div>
 
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                Advanced study in computer science with focus on software development,
-                data structures, and algorithms. Strong foundation in full-stack development
-                and system design.
+                {t("education.description")}
               </p>
             </div>
           </motion.div>
@@ -714,7 +803,7 @@ export default function Index() {
               className="flex items-center justify-center gap-2 px-8 h-14 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white/10 transition-colors whitespace-nowrap box-border"
             >
               <Mail className="w-6 h-6 flex-shrink-0" />
-              Email me
+              {t("emailMe")}
             </motion.a>
             <motion.a
               variants={itemVariants}
@@ -726,7 +815,7 @@ export default function Index() {
               className="flex items-center justify-center gap-2 px-8 h-14 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white/10 transition-colors whitespace-nowrap box-border"
             >
               <Linkedin className="w-6 h-6 flex-shrink-0" />
-              Connect on LinkedIn
+              {t("connectOnLinkedIn")}
             </motion.a>
           </motion.div>
         </motion.div>
