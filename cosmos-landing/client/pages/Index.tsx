@@ -9,7 +9,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackToTop } from "@/components/BackToTop";
 import { ConstructionModal } from "@/components/ConstructionModal";
-import { ArrowRight, Github, Linkedin, Mail, Download, Eye, ChevronDown } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, Download, Eye, ChevronDown, Instagram } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -41,7 +41,7 @@ const itemVariants = {
 
 // Blog posts will be generated dynamically based on language
 
-// LeetCode Icon Component - Stylized "L" representing LeetCode
+// LeetCode Icon Component - Official LeetCode Logo (Simple Icons)
 function LeetCodeIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -50,12 +50,12 @@ function LeetCodeIcon({ className }: { className?: string }) {
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662L2.591 12.314c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.767-4.726c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l.689.698 3.748-3.753c.195-.195.451-.293.707-.293.258 0 .51.098.707.293l7.103 7.095c.196.196.293.453.293.712 0 .258-.097.505-.293.701l-6.062 6.068zm-1.5-1.5l5.062-5.068-5.062-5.068-5.062 5.068 5.062 5.068z" />
+      <path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662L2.591 12.314c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.767-4.726c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l.689.698 3.748-3.753c.195-.195.451-.293.707-.293.258 0 .51.098.707.293l7.103 7.095c.196.196.293.453.293.712 0 .258-.097.505-.293.701l-6.062 6.068zm-1.5-1.5l5.062-5.068-5.062-5.068-5.062 5.068 5.062 5.068z"/>
     </svg>
   );
 }
 
-// CodeSandbox Icon Component
+// CodeSandbox Icon Component - Official CodeSandbox Logo (Simple Icons)
 function CodeSandboxIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -64,7 +64,7 @@ function CodeSandboxIcon({ className }: { className?: string }) {
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M1.5 6L12 0l10.5 6v12L12 24 1.5 18V6zm2.086 1.414v9.172L11 19.134V11.586L3.586 7.414zm16.828 0L13 11.586v7.548l7.414-4.172V7.414zM12 2.134l7.414 4.172L12 10.478 4.586 6.306 12 2.134z" />
+      <path d="M1.5 6L12 0l10.5 6v12L12 24 1.5 18V6zm2.086 1.414v9.172L11 19.134V11.586L3.586 7.414zm16.828 0L13 11.586v7.548l7.414-4.172V7.414zM12 2.134l7.414 4.172L12 10.478 4.586 6.306 12 2.134z"/>
     </svg>
   );
 }
@@ -193,16 +193,25 @@ function ResumeDropdownSection({ t, onContactClick, onViewWork, colors, colorCla
               <Download className={`w-4 h-4 ${colorClasses.text}`} />
               {t("downloadResume")}
             </button>
-            <a
+            <motion.a
               href="https://drive.google.com/file/d/12aCPeGewh-HYS4yXhqqdOh-vv07xtRwj/view"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsResumeOpen(false)}
-              className={`flex items-center gap-2 w-full px-4 py-3 text-slate-900 dark:text-white ${colorClasses.hoverBg} ${colorClasses.hoverBgDark} transition-colors text-left border-t border-slate-200 dark:border-slate-700`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`relative flex items-center gap-2 w-full px-4 py-3 text-slate-900 dark:text-white ${colorClasses.hoverBg} ${colorClasses.hoverBgDark} transition-all text-left border-t-2 ${colorClasses.border} ${colorClasses.borderDark} group overflow-hidden`}
             >
-              <Eye className="w-4 h-4 text-blue-600" />
-              {t("viewResume")}
-            </a>
+              <div className={`absolute inset-0 ${colorClasses.bg} ${colorClasses.bgDark} opacity-0 group-hover:opacity-10 transition-opacity`} />
+              <Eye className={`w-4 h-4 ${colorClasses.text} ${colorClasses.textDark} relative z-10`} />
+              <span className="font-semibold relative z-10">{t("viewResume")}</span>
+              <motion.div
+                className={`absolute left-0 top-0 bottom-0 w-1 ${colorClasses.bg} ${colorClasses.bgDark} opacity-60`}
+                initial={{ scaleY: 0 }}
+                whileHover={{ scaleY: 1 }}
+                transition={{ duration: 0.2 }}
+              />
+            </motion.a>
           </motion.div>
         )}
       </div>
@@ -292,6 +301,23 @@ export default function Index() {
                   {t("connectWithMe")}
                 </span>
                 <div className="flex gap-4">
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        href="https://instagram.com/o_mkar__"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                        aria-label="Instagram"
+                      >
+                        <Instagram className="w-5 h-5" />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Instagram</p>
+                    </TooltipContent>
+                  </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <motion.a

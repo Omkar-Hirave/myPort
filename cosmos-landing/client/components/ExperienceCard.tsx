@@ -43,13 +43,13 @@ export function ExperienceCard({
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="flex-1">
               <h3 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-1 tracking-tight">
-                {title}
-              </h3>
+          {title}
+        </h3>
               <div className="flex items-center gap-2">
                 <Building2 className={`w-5 h-5 ${colorClasses.text} ${colorClasses.textDark} flex-shrink-0`} />
                 <p className={`text-xl sm:text-2xl ${colorClasses.text} ${colorClasses.textDark} font-semibold`}>
-                  {company}
-                </p>
+          {company}
+        </p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-lg">
@@ -57,7 +57,7 @@ export function ExperienceCard({
               <span className="text-sm font-medium whitespace-nowrap">{duration}</span>
             </div>
           </div>
-        </div>
+      </div>
 
         {/* Key Achievements Section */}
         <div className="p-6 sm:p-8">
@@ -65,22 +65,22 @@ export function ExperienceCard({
             {t("keyAchievement")}
           </h4>
           <div className="space-y-4">
-            {highlights.map((highlight, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
+        {highlights.map((highlight, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1, duration: 0.3 }}
                 className="flex gap-4 items-start group/item"
-              >
+          >
                 {/* Professional bullet point */}
                 <div className={`flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r ${colors.button} mt-2 group-hover/item:scale-150 transition-transform`} />
                 <p className="text-slate-700 dark:text-slate-300 text-lg leading-relaxed flex-1">
-                  {highlight}
-                </p>
-              </motion.div>
-            ))}
+              {highlight}
+            </p>
+          </motion.div>
+        ))}
           </div>
         </div>
       </div>

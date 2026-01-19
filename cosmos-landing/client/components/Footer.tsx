@@ -1,4 +1,4 @@
-import { Linkedin, Github, Mail, Twitter } from "lucide-react";
+import { Linkedin, Github, Mail, Twitter, Instagram } from "lucide-react";
 import { useI18n } from "@/contexts/i18n-context";
 import { useColor } from "@/contexts/color-context";
 
@@ -118,13 +118,13 @@ export function Footer() {
                 <Github className="w-5 h-5" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://instagram.com/o_mkar__"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors"
-                aria-label="Twitter"
+                aria-label="Instagram"
               >
-                <Twitter className="w-5 h-5" />
+                <Instagram className="w-5 h-5" />
               </a>
             </div>
           </div>
