@@ -68,8 +68,8 @@ export function Header({ onContactClick }: HeaderProps) {
   const navItems = [
     { label: t("home"), href: "/", id: "home" },
     { label: t("experience"), href: "#experience", id: "experience" },
-    { label: t("projects"), href: "#projects", id: "projects" },
     { label: t("skills"), href: "#skills", id: "skills" },
+    { label: t("projects"), href: "#projects", id: "projects" },
     { label: t("blogs"), href: "#blogs", id: "blogs" },
   ];
 

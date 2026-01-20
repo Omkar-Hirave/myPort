@@ -112,16 +112,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  @media (pointer: fine) and (min-width: 769px) {
-    body {
-      cursor: none;
-    }
-
-    * {
-      cursor: none !important;
-    }
-  }
-
   :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
     overflow-wrap: anywhere;
     word-break: break-word;

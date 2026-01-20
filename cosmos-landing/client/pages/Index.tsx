@@ -320,16 +320,16 @@ export default function Index() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.a
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        href="https://linkedin.com/in/omkar-hirave"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                        aria-label="LinkedIn"
-                      >
-                        <Linkedin className="w-5 h-5" />
-                      </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    href="https://linkedin.com/in/omkar-hirave"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </motion.a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>LinkedIn</p>
@@ -337,16 +337,16 @@ export default function Index() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.a
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        href="https://github.com/omkar-hirave"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white transition-all"
-                        aria-label="GitHub"
-                      >
-                        <Github className="w-5 h-5" />
-                      </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    href="https://github.com/omkar-hirave"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white transition-all"
+                    aria-label="GitHub"
+                  >
+                    <Github className="w-5 h-5" />
+                  </motion.a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>GitHub</p>
@@ -354,16 +354,16 @@ export default function Index() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.a
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        href="https://leetcode.com/u/omkarhirave/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                        aria-label="LeetCode"
-                      >
-                        <LeetCodeIcon className="w-5 h-5" />
-                      </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    href="https://leetcode.com/u/omkarhirave/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                    aria-label="LeetCode"
+                  >
+                    <LeetCodeIcon className="w-5 h-5" />
+                  </motion.a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>LeetCode</p>
@@ -371,14 +371,14 @@ export default function Index() {
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.a
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        href="mailto:omkarhirve05@gmail.com"
-                        className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
-                        aria-label="Email"
-                      >
-                        <Mail className="w-5 h-5" />
-                      </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    href="mailto:omkarhirve05@gmail.com"
+                    className={`w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 ${colorClasses.hoverBgPrimary} hover:text-white transition-all`}
+                    aria-label="Email"
+                  >
+                    <Mail className="w-5 h-5" />
+                  </motion.a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Email</p>

@@ -9,7 +9,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { I18nProvider } from "@/contexts/i18n-context";
 import { ColorProvider } from "@/contexts/color-context";
-import { CustomCursor } from "@/components/CustomCursor";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -21,7 +20,6 @@ const App = () => (
       <ColorProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
-            <CustomCursor />
             <Toaster />
             <Sonner />
             <BrowserRouter>

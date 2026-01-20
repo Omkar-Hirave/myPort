@@ -37,7 +37,7 @@ export function ContactFormModal({ isOpen, onClose }: ContactFormModalProps) {
       // Send email using EmailJS
       const result = await emailjs.send(
         EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID, 
         {
           from_name: formData.name,
           from_email: formData.email,
