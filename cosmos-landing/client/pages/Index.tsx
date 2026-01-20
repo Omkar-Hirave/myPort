@@ -297,7 +297,7 @@ export default function Index() {
                 variants={itemVariants}
                 className="flex items-center gap-6"
               >
-                <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                <span className="hidden md:inline text-sm text-slate-600 dark:text-slate-400 font-medium">
                   {t("connectWithMe")}
                 </span>
                 <div className="flex gap-4">

@@ -134,13 +134,14 @@ export function Header({ onContactClick }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 transition-colors">
       <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-2 overflow-hidden">
+        {/* Desktop Layout */}
+        <div className="hidden md:flex items-center justify-between h-16 gap-2">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group flex-shrink-0 min-w-0">
-            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br ${themeColors.button} flex items-center justify-center hover:shadow-lg transition-shadow flex-shrink-0`}>
-              <span className="text-white font-bold text-base sm:text-lg">O</span>
+            <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${themeColors.button} flex items-center justify-center hover:shadow-lg transition-shadow flex-shrink-0`}>
+              <span className="text-white font-bold text-lg">O</span>
             </div>
-            <span className="hidden sm:inline font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
+            <span className="font-bold text-lg text-slate-900 dark:text-white truncate">
               Omkar Hirave
             </span>
           </Link>
@@ -355,43 +356,60 @@ export function Header({ onContactClick }: HeaderProps) {
             </button>
           </div>
 
-          {/* Mobile Menu & Controls */}
-          <div className="md:hidden flex items-center gap-1.5 flex-shrink-0">
-            {/* Email/Phone Display with Copy - Mobile - Auto Switching */}
+        </div>
+
+        {/* Mobile Layout - Two Rows */}
+        <div className="md:hidden">
+          {/* Top Row: Connect with me */}
+          <div className="flex items-center justify-center h-12 border-b border-slate-200 dark:border-slate-700">
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={handleCopy}
-                  className="flex items-center justify-center p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white overflow-hidden relative w-9 h-9 flex-shrink-0"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-sm overflow-hidden relative"
                 >
                   <AnimatePresence mode="wait">
                     {showEmail ? (
                       <motion.div
                         key="email-mobile"
-                        initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
-                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex items-center gap-2"
                       >
                         {emailCopied ? (
-                          <Check className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                          <>
+                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <span className="text-green-600 dark:text-green-400">Copied!</span>
+                          </>
                         ) : (
-                          <Mail className="w-3.5 h-3.5" />
+                          <>
+                            <Mail className="w-4 h-4" />
+                            <span>{email}</span>
+                          </>
                         )}
                       </motion.div>
                     ) : (
                       <motion.div
                         key="phone-mobile"
-                        initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
-                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex items-center gap-2"
                       >
                         {phoneCopied ? (
-                          <Check className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                          <>
+                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <span className="text-green-600 dark:text-green-400">Copied!</span>
+                          </>
                         ) : (
-                          <Phone className="w-3.5 h-3.5" />
+                          <>
+                            <Phone className="w-4 h-4" />
+                            <span>{phone}</span>
+                          </>
                         )}
                       </motion.div>
                     )}
@@ -410,102 +428,120 @@ export function Header({ onContactClick }: HeaderProps) {
                 </p>
               </TooltipContent>
             </Tooltip>
+          </div>
 
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex-shrink-0 w-9 h-9 flex items-center justify-center"
-            >
-              {theme === "dark" ? (
-                <Sun className="w-3.5 h-3.5" />
-              ) : (
-                <Moon className="w-3.5 h-3.5" />
-              )}
-            </button>
+          {/* Bottom Row: Logo and Icons */}
+          <div className="flex items-center justify-between h-12 gap-2 px-0">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 group flex-shrink-0 min-w-0">
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${themeColors.button} flex items-center justify-center hover:shadow-lg transition-shadow flex-shrink-0`}>
+                <span className="text-white font-bold text-sm">O</span>
+              </div>
+              <span className="hidden xs:inline font-bold text-sm text-slate-900 dark:text-white truncate max-w-[100px]">
+                Omkar Hirave
+              </span>
+            </Link>
 
-            {/* Color Selector Mobile */}
-            <div className="relative flex-shrink-0">
+            {/* Icons Row */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {/* Dark Mode Toggle */}
               <button
-                onClick={() => setIsColorOpen(!isColorOpen)}
-                className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white w-9 h-9 flex items-center justify-center"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex-shrink-0"
+                aria-label="Toggle theme"
               >
-                <Palette className="w-3.5 h-3.5" />
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
               </button>
-              {isColorOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="fixed top-16 right-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-2 z-50"
+
+              {/* Color Selector Mobile */}
+              <div className="relative flex-shrink-0">
+                <button
+                  onClick={() => setIsColorOpen(!isColorOpen)}
+                  className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  aria-label="Change color"
                 >
-                  <div className="grid grid-cols-2 gap-2">
-                    {colors.map((col) => (
+                  <Palette className="w-4 h-4" />
+                </button>
+                {isColorOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="fixed top-24 right-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-2 z-50"
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      {colors.map((col) => (
+                        <button
+                          key={col.name}
+                          onClick={() => {
+                            setColor(col.name);
+                            setIsColorOpen(false);
+                          }}
+                          className={`flex items-center gap-2 px-2 py-1 rounded text-xs font-medium transition-all ${
+                            color === col.name
+                              ? "ring-2 ring-offset-1 dark:ring-offset-slate-800 ring-slate-400"
+                              : ""
+                          }`}
+                        >
+                          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${col.gradient}`} />
+                          {col.label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Language Selector Mobile */}
+              <div className="relative flex-shrink-0">
+                <button
+                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  className="px-2.5 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-xs min-w-[40px]"
+                >
+                  {language.toUpperCase()}
+                </button>
+                {isLangOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="fixed top-24 right-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50"
+                  >
+                    {languages.map((lang) => (
                       <button
-                        key={col.name}
+                        key={lang.code}
                         onClick={() => {
-                          setColor(col.name);
-                          setIsColorOpen(false);
+                          setLanguage(lang.code);
+                          setIsLangOpen(false);
                         }}
-                        className={`flex items-center gap-2 px-2 py-1 rounded text-xs font-medium transition-all ${
-                          color === col.name
-                            ? "ring-2 ring-offset-1 dark:ring-offset-slate-800 ring-slate-400"
-                            : ""
+                        className={`block w-full text-left px-3 py-2 text-xs font-medium transition-colors ${
+                          language === lang.code
+                            ? "bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300"
+                            : "text-slate-900 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                         }`}
                       >
-                        <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${col.gradient}`} />
-                        {col.label}
+                        {lang.name}
                       </button>
                     ))}
-                  </div>
-                </motion.div>
-              )}
-            </div>
+                  </motion.div>
+                )}
+              </div>
 
-            {/* Language Selector Mobile */}
-            <div className="relative flex-shrink-0">
+              {/* Menu Button */}
               <button
-                onClick={() => setIsLangOpen(!isLangOpen)}
-                className="px-1.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-[10px] min-w-[32px] h-9 flex items-center justify-center"
+                className="p-2 flex-shrink-0"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle menu"
               >
-                {language.toUpperCase()}
+                {isOpen ? (
+                  <X className="w-5 h-5 text-slate-900 dark:text-white" />
+                ) : (
+                  <Menu className="w-5 h-5 text-slate-900 dark:text-white" />
+                )}
               </button>
-              {isLangOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="fixed top-16 right-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50"
-                >
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => {
-                        setLanguage(lang.code);
-                        setIsLangOpen(false);
-                      }}
-                      className={`block w-full text-left px-3 py-2 text-xs font-medium transition-colors ${
-                        language === lang.code
-                          ? "bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300"
-                          : "text-slate-900 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      }`}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
             </div>
-
-            {/* Menu Button */}
-            <button
-              className="p-1.5 flex-shrink-0 w-9 h-9 flex items-center justify-center"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <X className="w-5 h-5 text-slate-900 dark:text-white" />
-              ) : (
-                <Menu className="w-5 h-5 text-slate-900 dark:text-white" />
-              )}
-            </button>
           </div>
         </div>
 
